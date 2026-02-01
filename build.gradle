@@ -26,7 +26,8 @@ dependencies {
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	// PostgreSQL driver for Supabase
+	runtimeOnly 'org.postgresql:postgresql:42.6.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.riyatuition.riya_tuition.enums.AttendanceStatus;
 @Getter
@@ -21,6 +22,7 @@ import com.riyatuition.riya_tuition.enums.AttendanceStatus;
         @UniqueConstraint(columnNames = {"student_id", "date"})
     }
 )
+@EntityListeners(AuditingEntityListener.class)
 public class AttendanceEntity {
 
     @Id
