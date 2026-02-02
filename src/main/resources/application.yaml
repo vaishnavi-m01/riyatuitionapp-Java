@@ -19,7 +19,7 @@ spring:
       max-request-size: 10MB
 
 server:
-  port: 7070
+  port: ${PORT:7070}
   servlet:
     context-path: /api
 
