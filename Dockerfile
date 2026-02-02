@@ -14,6 +14,6 @@ RUN ./gradlew clean build -x test
 # Now copy the jar (it exists now!)
 RUN cp build/libs/*.jar app.jar
 
-EXPOSE ${PORT:-7070}
+EXPOSE 7070
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
