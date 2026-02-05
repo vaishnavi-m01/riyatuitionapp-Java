@@ -55,39 +55,15 @@ public class AdminController {
         return ResponseEntity.ok("Admin deleted successfully");
     }
 
-    // ✅ GET ALL (FIXED IMAGE URL)
+    // ✅ GET ALL (NO IMAGE MODIFICATION)
     @GetMapping("/getall")
-    public ResponseEntity<List<AdminEntity>> getAll(HttpServletRequest request) {
-
-        List<AdminEntity> admins = service.getAll();
-
-        String baseUrl = request.getScheme() + "://" + request.getServerName()
-                + ":" + request.getServerPort();
-
-        for (AdminEntity admin : admins) {
-            if (admin.getImage() != null && !admin.getImage().isBlank()) {
-                admin.setImage(baseUrl + "/api/" + admin.getImage());
-            }
-        }
-
-        return ResponseEntity.ok(admins);
+    public ResponseEntity<List<AdminEntity>> getAll() {
+        return ResponseEntity.ok(service.getAll());
     }
 
-    // ✅ GET BY ID (FIXED IMAGE URL)
+    // ✅ GET BY ID
     @GetMapping("/getbyid/{id}")
-    public ResponseEntity<AdminEntity> getById(
-            @PathVariable Integer id,
-            HttpServletRequest request) {
-
-        AdminEntity admin = service.getById(id);
-
-        if (admin.getImage() != null && !admin.getImage().isBlank()) {
-            String baseUrl = request.getScheme() + "://" + request.getServerName()
-                    + ":" + request.getServerPort();
-
-            admin.setImage(baseUrl + "/api/" + admin.getImage());
-        }
-
-        return ResponseEntity.ok(admin);
+    public ResponseEntity<AdminEntity> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(service.getById(id));
     }
 }

@@ -1,27 +1,33 @@
 package com.riyatuition.riya_tuition.serviceImgl;
 
-import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.riyatuition.riya_tuition.entity.AdminEntity;
 import com.riyatuition.riya_tuition.repository.AdminRepository;
 import com.riyatuition.riya_tuition.service.AdminService;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
-
 
 @Service
 public class AdminServiceImpl implements AdminService {
 
     private final AdminRepository repo;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-    private final String UPLOAD_DIR = "uploads/admin/";
+
+    // 🔹 Supabase config (application.yml la irundhu varum)
+    @Value("${supabase.url}")
+    private String SUPABASE_URL;
+
+    @Value("${supabase.anon-key}")
+    private String SUPABASE_ANON_KEY;
 
     public AdminServiceImpl(AdminRepository repo) {
         this.repo = repo;
@@ -36,14 +42,14 @@ public class AdminServiceImpl implements AdminService {
             return "Email already exists";
         }
 
-        String imagePath = saveImage(image);
+        String imageUrl = uploadToSupabase(image);
 
         AdminEntity admin = new AdminEntity();
         admin.setName(name);
         admin.setEmail(email);
         admin.setPhone(phone);
         admin.setPassword(encoder.encode(password));
-        admin.setImage(imagePath);
+        admin.setImage(imageUrl); // ✅ FULL Supabase URL
 
         repo.save(admin);
         return "Admin registered successfully";
@@ -61,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
         admin.setPhone(phone);
 
         if (image != null && !image.isEmpty()) {
-            admin.setImage(saveImage(image));
+            admin.setImage(uploadToSupabase(image));
         }
 
         repo.save(admin);
@@ -87,41 +93,36 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
     }
 
-    // 🔹 Image Save Helper
-    private String saveImage(MultipartFile image) {
+    // 🔹 SUPABASE IMAGE UPLOAD (CORE METHOD)
+    private String uploadToSupabase(MultipartFile file) {
 
-        if (image == null || image.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return null;
         }
 
         try {
-            String uploadDir = "E:/Backend-Java/riya-tuition/uploads/admin/";
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
-            Path uploadPath = Paths.get(uploadDir);
+            String uploadUrl =
+                SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
 
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setBearerAuth(SUPABASE_ANON_KEY);
 
-            String originalFileName = image.getOriginalFilename();
-            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            String fileName = UUID.randomUUID() + extension;
+            HttpEntity<byte[]> request =
+                new HttpEntity<>(file.getBytes(), headers);
 
-            Path filePath = uploadPath.resolve(fileName);
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.postForEntity(uploadUrl, request, String.class);
 
-            Files.copy(
-                image.getInputStream(),
-                filePath,
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-            );
-
-            return "uploads/admin/" + fileName;
+            // ✅ PUBLIC URL (DB-la store panna vendiyadhu)
+            return SUPABASE_URL
+                + "/storage/v1/object/public/admin-images/"
+                + fileName;
 
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Image upload failed");
+            throw new RuntimeException("Supabase image upload failed", e);
         }
     }
-
-
 }

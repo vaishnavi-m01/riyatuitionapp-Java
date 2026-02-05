@@ -29,3 +29,8 @@ server:
   port: ${PORT}
   servlet:
     context-path: /api
+
+
+supabase:
+  url: https://ostditakoibxmeysltys.supabase.co
+  anon-key: sb_publishable_npbVHQkEGT34rClkpofs6A_dBCRRGib
