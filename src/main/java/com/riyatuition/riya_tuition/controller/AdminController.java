@@ -29,11 +29,13 @@ public class AdminController {
             @RequestPart("phone") String phone,
             @RequestPart("password") String password,
             @RequestPart(value = "image", required = false) MultipartFile image
-    ) {
-        return ResponseEntity.ok(
-                service.register(name, email, phone, password, image)
-        );
-    }
+    ) try {
+    return ResponseEntity.ok(service.register(name, email, phone, password, image));
+} catch (Exception e) {
+    e.printStackTrace(); // Shows error in Render logs
+    return ResponseEntity.status(500).body(e.getMessage());
+}
+
 
     // ✅ UPDATE
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
