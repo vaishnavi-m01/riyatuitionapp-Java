@@ -22,19 +22,23 @@ public class AdminController {
     }
 
     // ✅ REGISTER
-    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> register(
-            @RequestPart("name") String name,
-            @RequestPart("email") String email,
-            @RequestPart("phone") String phone,
-            @RequestPart("password") String password,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ) try {
-    return ResponseEntity.ok(service.register(name, email, phone, password, image));
-} catch (Exception e) {
-    e.printStackTrace(); // Shows error in Render logs
-    return ResponseEntity.status(500).body(e.getMessage());
+   @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+public ResponseEntity<String> register(
+        @RequestPart("name") String name,
+        @RequestPart("email") String email,
+        @RequestPart("phone") String phone,
+        @RequestPart("password") String password,
+        @RequestPart(value = "image", required = false) MultipartFile image
+) {
+    try {
+        String result = service.register(name, email, phone, password, image);
+        return ResponseEntity.ok(result);
+    } catch (Exception e) {
+        e.printStackTrace(); // Will log error in Render logs
+        return ResponseEntity.status(500).body(e.getMessage());
+    }
 }
+
 
 
     // ✅ UPDATE
