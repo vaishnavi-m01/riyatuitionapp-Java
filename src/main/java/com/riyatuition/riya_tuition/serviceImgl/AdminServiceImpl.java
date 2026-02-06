@@ -22,12 +22,11 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository repo;
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    // 🔹 Supabase config (application.yml la irundhu varum)
     @Value("${supabase.url}")
     private String SUPABASE_URL;
 
-    @Value("${supabase.anon-key}")
-    private String SUPABASE_ANON_KEY;
+    @Value("${supabase.service-key}")
+    private String SUPABASE_SERVICE_KEY;
 
     public AdminServiceImpl(AdminRepository repo) {
         this.repo = repo;
@@ -108,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setBearerAuth(SUPABASE_ANON_KEY);
+            headers.setBearerAuth(SUPABASE_SERVICE_KEY);
 
             HttpEntity<byte[]> request =
                 new HttpEntity<>(file.getBytes(), headers);
