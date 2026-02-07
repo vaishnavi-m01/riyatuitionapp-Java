@@ -24,21 +24,23 @@ public class StudentController {
     // ✅ CREATE STUDENT WITH IMAGE
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public StudentModel createStudent(
-            @RequestPart("student") @Valid StudentModel model,
+            @ModelAttribute @Valid StudentModel model,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         return service.createStudent(model, image);
     }
 
+
     // ✅ UPDATE STUDENT IMAGE (overwrite)
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public StudentModel updateStudent(
             @PathVariable Integer id,
-            @RequestPart("student") @Valid StudentModel model,
+            @ModelAttribute @Valid StudentModel model,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) {
         return service.updateStudent(id, model, image);
     }
+
 
     @GetMapping("/all")
     public List<StudentModel> getAll() {

@@ -13,7 +13,6 @@ import lombok.Setter;
 @Setter
 @JsonPropertyOrder({
     "id",
-    "imageUrl",
     "name",
     "phone",
     "school",
@@ -26,6 +25,7 @@ import lombok.Setter;
     "dateOfBirth",
     "joiningDate",
     "address",
+    "imageUrl",
     "activeStatus",
     "createdDate",
     "modifiedDate"
