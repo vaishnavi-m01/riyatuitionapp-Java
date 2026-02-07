@@ -113,9 +113,11 @@ public class AdminServiceImpl implements AdminService {
                 new HttpEntity<>(file.getBytes(), headers);
 
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForEntity(uploadUrl, request, String.class);
 
-            // ✅ PUBLIC URL (DB-la store panna vendiyadhu)
+            // ✅ IMPORTANT: PUT, NOT POST
+            restTemplate.put(uploadUrl, request);
+
+            // ✅ Public URL
             return SUPABASE_URL
                 + "/storage/v1/object/public/admin-images/"
                 + fileName;
@@ -124,4 +126,5 @@ public class AdminServiceImpl implements AdminService {
             throw new RuntimeException("Supabase image upload failed", e);
         }
     }
+
 }
