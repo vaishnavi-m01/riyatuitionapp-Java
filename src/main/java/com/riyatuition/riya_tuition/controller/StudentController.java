@@ -22,16 +22,14 @@ public class StudentController {
     private StudentService service;
 
     // ✅ CREATE STUDENT WITH IMAGE
-    @PostMapping(
-    		  value = "/create",
-    		  consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    		)
-    		public StudentModel createStudent(
-    		    @RequestPart("model") @Valid StudentModel model,
-    		    @RequestPart(value = "image", required = false) MultipartFile image
-    		) {
-    		    return service.createStudent(model, image);
-    		}
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentModel createStudent(
+            @ModelAttribute @Valid StudentModel model,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
+        return service.createStudent(model, image);
+    }
+
 
 
     // ✅ UPDATE STUDENT IMAGE (overwrite)
