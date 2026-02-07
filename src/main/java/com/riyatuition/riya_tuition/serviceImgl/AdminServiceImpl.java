@@ -93,38 +93,44 @@ public class AdminServiceImpl implements AdminService {
     }
 
     // 🔹 SUPABASE IMAGE UPLOAD (CORE METHOD)
-    private String uploadToSupabase(MultipartFile file) {
+  private String uploadToSupabase(MultipartFile file) {
 
-        if (file == null || file.isEmpty()) {
-            return null;
-        }
-
-        try {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-            String uploadUrl =
-                SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setBearerAuth(SUPABASE_SERVICE_KEY);
-
-            HttpEntity<byte[]> request =
-                new HttpEntity<>(file.getBytes(), headers);
-
-            RestTemplate restTemplate = new RestTemplate();
-
-            // ✅ IMPORTANT: PUT, NOT POST
-            restTemplate.put(uploadUrl, request);
-
-            // ✅ Public URL
-            return SUPABASE_URL
-                + "/storage/v1/object/public/admin-images/"
-                + fileName;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Supabase image upload failed", e);
-        }
+    if (file == null || file.isEmpty()) {
+        return null;
     }
+
+    try {
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        String uploadUrl =
+            SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setBearerAuth(SUPABASE_SERVICE_KEY);
+
+        HttpEntity<byte[]> request =
+            new HttpEntity<>(file.getBytes(), headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        // ✅ THIS sends headers correctly
+        restTemplate.exchange(
+                uploadUrl,
+                org.springframework.http.HttpMethod.PUT,
+                request,
+                String.class
+        );
+
+        return SUPABASE_URL
+            + "/storage/v1/object/public/admin-images/"
+            + fileName;
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        throw new RuntimeException("Supabase image upload failed", e);
+    }
+}
+
 
 }
