@@ -112,10 +112,10 @@ public class StudentServiceImpl implements StudentService {
     private String uploadToSupabase(MultipartFile file, Integer studentId) {
 
         try {
-            String fileName = "student_" + studentId + ".png";
+            String fileName = "Student_" + studentId + ".png";
 
             String uploadUrl =
-                    SUPABASE_URL + "/storage/v1/object/student_images/" + fileName;
+                    SUPABASE_URL + "/storage/v1/object/Student_image/" + fileName;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
@@ -128,7 +128,7 @@ public class StudentServiceImpl implements StudentService {
             restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, String.class);
 
             return SUPABASE_URL +
-                    "/storage/v1/object/public/student_images/" +
+                    "/storage/v1/object/public/Student_image/" +
                     fileName;
 
         } catch (Exception e) {
