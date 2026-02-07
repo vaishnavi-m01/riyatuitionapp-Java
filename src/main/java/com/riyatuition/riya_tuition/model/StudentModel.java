@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 @JsonPropertyOrder({
     "id",
+    "imageUrl",
     "name",
     "phone",
     "school",
@@ -64,6 +65,8 @@ public class StudentModel {
 
     private String address;
     private Boolean activeStatus;
+    private String imageUrl;
+
 
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;

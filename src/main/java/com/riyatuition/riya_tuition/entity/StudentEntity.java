@@ -49,6 +49,9 @@ public class StudentEntity {
 
     @Column(name = "active_status")
     private Boolean activeStatus;
+     
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @CreatedDate
     @Column(name = "created_date", updatable = false)

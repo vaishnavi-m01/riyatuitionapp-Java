@@ -1,17 +1,20 @@
 package com.riyatuition.riya_tuition.service;
 
 import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import com.riyatuition.riya_tuition.model.StudentModel;
 
 public interface StudentService {
 
-    StudentModel createStudent(StudentModel model);
+	  StudentModel createStudent(StudentModel model, MultipartFile image);
 
-    List<StudentModel> getAllStudents();
+	    StudentModel updateStudent(Integer id, StudentModel model, MultipartFile image);
 
-    StudentModel getStudentById(Integer id);
+	    List<StudentModel> getAllStudents();
 
-    StudentModel updateStudent(Integer id, StudentModel model);
+	    StudentModel getStudentById(Integer id);
 
-    String deleteStudent(Integer id);
+	    String deleteStudent(Integer id);
 }

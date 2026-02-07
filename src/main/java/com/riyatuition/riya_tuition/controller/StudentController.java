@@ -4,43 +4,54 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.riyatuition.riya_tuition.model.StudentModel;
 import com.riyatuition.riya_tuition.service.StudentService;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
+
 
 @RestController
 @RequestMapping("/students")
 public class StudentController {
 
-	@Autowired
-	private StudentService service;
+    @Autowired
+    private StudentService service;
 
-	@PostMapping("/create")
-	public StudentModel createStudent(@Valid @RequestBody StudentModel model) {
-		return service.createStudent(model);
-	}
+    // ✅ CREATE STUDENT WITH IMAGE
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentModel createStudent(
+            @RequestPart("student") @Valid StudentModel model,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
+        return service.createStudent(model, image);
+    }
 
-	@GetMapping("/all")
-	public List<StudentModel> getAll() {
-		return service.getAllStudents();
-	}
+    // ✅ UPDATE STUDENT IMAGE (overwrite)
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public StudentModel updateStudent(
+            @PathVariable Integer id,
+            @RequestPart("student") @Valid StudentModel model,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) {
+        return service.updateStudent(id, model, image);
+    }
 
-	@GetMapping("/{id}")
-	public StudentModel getById (@Parameter(description = "Student ID") @PathVariable("id") Integer id) {
-		return service.getStudentById(id);
-	}
+    @GetMapping("/all")
+    public List<StudentModel> getAll() {
+        return service.getAllStudents();
+    }
 
-	@PutMapping("/update/{id}")
-	public StudentModel update(@Parameter(description = "Student ID") @PathVariable("id") Integer id,
-			@RequestBody @Valid StudentModel model) {
-		return service.updateStudent(id, model);
-	}
+    @GetMapping("/{id}")
+    public StudentModel getById(@PathVariable Integer id) {
+        return service.getStudentById(id);
+    }
 
-	@DeleteMapping("/delete/{id}")
-	public String delete (@Parameter(description = "Student ID") @PathVariable("id") Integer id) {
-		return service.deleteStudent(id);
-	}
+    @DeleteMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id) {
+        return service.deleteStudent(id);
+    }
 }

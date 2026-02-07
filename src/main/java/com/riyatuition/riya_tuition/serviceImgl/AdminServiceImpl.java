@@ -41,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
             return "Email already exists";
         }
 
-        String imageUrl = uploadToSupabase(image);
+        String imageUrl = uploadToSupabase(image,0);
 
         AdminEntity admin = new AdminEntity();
         admin.setName(name);
@@ -66,12 +66,14 @@ public class AdminServiceImpl implements AdminService {
         admin.setPhone(phone);
 
         if (image != null && !image.isEmpty()) {
-            admin.setImage(uploadToSupabase(image));
+            // Pass admin ID to upload method
+            admin.setImage(uploadToSupabase(image, id));
         }
 
         repo.save(admin);
         return "Admin updated successfully";
     }
+
 
     // ✅ DELETE
     @Override
@@ -93,44 +95,47 @@ public class AdminServiceImpl implements AdminService {
     }
 
     // 🔹 SUPABASE IMAGE UPLOAD (CORE METHOD)
-  private String uploadToSupabase(MultipartFile file) {
+  
+    private String uploadToSupabase(MultipartFile file, Integer adminId) {
 
-    if (file == null || file.isEmpty()) {
-        return null;
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        try {
+            // Use adminId in filename so it overwrites old file
+            String fileName = "admin_" + adminId + "_" + file.getOriginalFilename();
+
+            String uploadUrl =
+                SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setBearerAuth(SUPABASE_SERVICE_KEY);
+
+            HttpEntity<byte[]> request =
+                new HttpEntity<>(file.getBytes(), headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            // PUT request will overwrite the file if same name exists
+            restTemplate.exchange(
+                    uploadUrl,
+                    org.springframework.http.HttpMethod.PUT,
+                    request,
+                    String.class
+            );
+
+            // Public URL
+            return SUPABASE_URL
+                + "/storage/v1/object/public/admin-images/"
+                + fileName;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Supabase image upload failed", e);
+        }
     }
-
-    try {
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-        String uploadUrl =
-            SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setBearerAuth(SUPABASE_SERVICE_KEY);
-
-        HttpEntity<byte[]> request =
-            new HttpEntity<>(file.getBytes(), headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        // ✅ THIS sends headers correctly
-        restTemplate.exchange(
-                uploadUrl,
-                org.springframework.http.HttpMethod.PUT,
-                request,
-                String.class
-        );
-
-        return SUPABASE_URL
-            + "/storage/v1/object/public/admin-images/"
-            + fileName;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        throw new RuntimeException("Supabase image upload failed", e);
-    }
-}
 
 
 }
