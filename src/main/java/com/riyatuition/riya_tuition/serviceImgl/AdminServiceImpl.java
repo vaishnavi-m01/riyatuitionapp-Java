@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -103,8 +104,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         try {
-            // Use adminId in filename so it overwrites old file
-            String fileName = "admin_" + adminId + "_" + file.getOriginalFilename();
+            String fileName = "admin_" + adminId + ".png";
 
             String uploadUrl =
                 SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
@@ -117,25 +117,17 @@ public class AdminServiceImpl implements AdminService {
                 new HttpEntity<>(file.getBytes(), headers);
 
             RestTemplate restTemplate = new RestTemplate();
+            restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, String.class);
 
-            // PUT request will overwrite the file if same name exists
-            restTemplate.exchange(
-                    uploadUrl,
-                    org.springframework.http.HttpMethod.PUT,
-                    request,
-                    String.class
-            );
-
-            // Public URL
             return SUPABASE_URL
                 + "/storage/v1/object/public/admin-images/"
                 + fileName;
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new RuntimeException("Supabase image upload failed", e);
         }
     }
+
 
 
 }
