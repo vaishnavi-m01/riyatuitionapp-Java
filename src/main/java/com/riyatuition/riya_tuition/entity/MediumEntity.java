@@ -14,14 +14,13 @@ public class MediumEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-      
-    @Column(name = "name")
 
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "createdDate")
     private LocalDateTime createdDate;
-    
+
     @Column(name = "modifiedDate")
     private LocalDateTime modifiedDate;
 }

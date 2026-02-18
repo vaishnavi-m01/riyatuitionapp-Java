@@ -1,68 +1,62 @@
-	package com.riyatuition.riya_tuition.repository;
-	
-	import java.math.BigDecimal;
-	import java.time.LocalDateTime;
-	import java.util.List;
-	import java.util.Optional;
-	
-	import org.springframework.data.jpa.repository.JpaRepository;
-	import org.springframework.data.jpa.repository.Query;
-	import org.springframework.data.repository.query.Param;
-	import org.springframework.stereotype.Repository;
-	
-	import com.riyatuition.riya_tuition.entity.FeesEntity;
-	import com.riyatuition.riya_tuition.enums.PaymentType;
-	
-	@Repository
-	public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
-	
-	    @Query("""
-	            SELECT 
-	                COALESCE(SUM(f.paid), 0),
-	                COALESCE(SUM(CASE WHEN f.paymentType = :cash THEN f.paid ELSE 0 END), 0),
-	                COALESCE(SUM(CASE WHEN f.paymentType = :upi THEN f.paid ELSE 0 END), 0)
-	            FROM FeesEntity f
-	            WHERE f.createdDate BETWEEN :start AND :end
-	        """)
-	    Object[] getPaidSummary(
-	            @Param("start") LocalDateTime start,
-	            @Param("end") LocalDateTime end,
-	            @Param("cash") PaymentType cash,
-	            @Param("upi") PaymentType upi
-	    );
-	
-	    // Total pending amount (was f.balance -> f.pending)
-	    @Query("""
-	            SELECT COALESCE(SUM(f.pending), 0)
-	            FROM FeesEntity f
-	            WHERE f.pending > 0
-	        """)
-	    BigDecimal totalDueAmount();
-	
-	    // Students with pending fees
-	    @Query("""
-	            SELECT COUNT(DISTINCT f.studentId)
-	            FROM FeesEntity f
-	            WHERE f.pending > 0
-	        """)
-	    long countDueStudents();
-	    
-	    @Query("SELECT COALESCE(SUM(f.paid),0) FROM FeesEntity f WHERE f.createdDate BETWEEN :start AND :end")
-	    Integer sumPaidByCreatedDateBetween(
-	        @Param("start") LocalDateTime start,
-	        @Param("end") LocalDateTime end
-	    );
-	
-	    Optional<FeesEntity> findTopByCreatedDateBetweenOrderByCreatedDateDesc(
-	        LocalDateTime start,
-	        LocalDateTime end
-	    );
-	    
-	    List<FeesEntity> findByCreatedDateBetween(
-	    	    LocalDateTime start,
-	    	    LocalDateTime end
-	    	);
+package com.riyatuition.riya_tuition.repository;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
-	
-	}
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.riyatuition.riya_tuition.entity.FeesEntity;
+import com.riyatuition.riya_tuition.enums.PaymentType;
+
+@Repository
+public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
+
+	@Query("""
+			    SELECT
+			        COALESCE(SUM(f.paid), 0),
+			        COALESCE(SUM(CASE WHEN f.paymentType = :cash THEN f.paid ELSE 0 END), 0),
+			        COALESCE(SUM(CASE WHEN f.paymentType = :upi THEN f.paid ELSE 0 END), 0)
+			    FROM FeesEntity f
+			    WHERE f.createdDate BETWEEN :start AND :end
+			""")
+	Object[] getPaidSummary(
+			@Param("start") LocalDateTime start,
+			@Param("end") LocalDateTime end,
+			@Param("cash") PaymentType cash,
+			@Param("upi") PaymentType upi);
+
+	// Total pending amount (was f.balance -> f.pending)
+	@Query("""
+			    SELECT COALESCE(SUM(f.pending), 0)
+			    FROM FeesEntity f
+			    WHERE f.pending > 0
+			""")
+	BigDecimal totalDueAmount();
+
+	// Students with pending fees
+	@Query("""
+			    SELECT COUNT(DISTINCT f.studentId)
+			    FROM FeesEntity f
+			    WHERE f.pending > 0
+			""")
+	long countDueStudents();
+
+	@Query("SELECT COALESCE(SUM(f.paid),0) FROM FeesEntity f WHERE f.createdDate BETWEEN :start AND :end")
+	Integer sumPaidByCreatedDateBetween(
+			@Param("start") LocalDateTime start,
+			@Param("end") LocalDateTime end);
+
+	Optional<FeesEntity> findTopByCreatedDateBetweenOrderByCreatedDateDesc(
+			LocalDateTime start,
+			LocalDateTime end);
+
+	List<FeesEntity> findByCreatedDateBetween(
+			LocalDateTime start,
+			LocalDateTime end);
+
+}

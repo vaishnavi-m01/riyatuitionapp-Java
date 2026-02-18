@@ -12,15 +12,16 @@ import com.riyatuition.riya_tuition.service.MediumService;
 
 @Service
 public class MediumServiceImp implements MediumService {
-	
+
 	@Autowired
 	private MediumRepo mediumRepo;
-	
-	private MediumModel  maptoModel(MediumEntity entity) {
-		if (entity == null) return null;
+
+	private MediumModel maptoModel(MediumEntity entity) {
+		if (entity == null)
+			return null;
 
 		MediumModel model = new MediumModel();
-		
+
 		model.setId(entity.getId());
 		model.setName(entity.getName());
 		model.setCreatedDate(entity.getCreatedDate());
@@ -30,13 +31,13 @@ public class MediumServiceImp implements MediumService {
 
 	@Override
 	public MediumModel createMedium(MediumModel model) {
-		
+
 		MediumEntity entity = new MediumEntity();
 		entity.setId(model.getId());
 		entity.setName(model.getName());
 		entity.setCreatedDate(model.getCreatedDate());
 		entity.setModifiedDate(model.getModifiedDate());
-		
+
 		MediumEntity saved = mediumRepo.save(entity);
 		return maptoModel(saved);
 	}
@@ -54,24 +55,25 @@ public class MediumServiceImp implements MediumService {
 
 	@Override
 	public MediumModel updateMedium(Integer id, MediumModel model) {
-	
+
 		MediumEntity entity = mediumRepo.findById(id).orElse(null);
-		
-		if(entity == null) return null;
-		
+
+		if (entity == null)
+			return null;
+
 		entity.setId(model.getId());
 		entity.setName(model.getName());
 		entity.setModifiedDate(model.getModifiedDate());
-		 
+
 		MediumEntity update = mediumRepo.save(entity);
 		return maptoModel(update);
 	}
 
 	@Override
 	public String deleteMedium(Integer id) {
-		
+
 		mediumRepo.deleteById(id);
-		return "Standard deleted successfully!";	
+		return "Standard deleted successfully!";
 	}
 
 }

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 
-
 @RestController
 @RequestMapping("/students")
 public class StudentController {
@@ -25,23 +24,18 @@ public class StudentController {
     @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public StudentModel createStudent(
             @ModelAttribute StudentModel model,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ) {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return service.createStudent(model, image);
     }
-
-
 
     // ✅ UPDATE STUDENT IMAGE (overwrite)
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public StudentModel updateStudent(
             @PathVariable Integer id,
             @ModelAttribute @Valid StudentModel model,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ) {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return service.updateStudent(id, model, image);
     }
-
 
     @GetMapping("/all")
     public List<StudentModel> getAll() {
@@ -49,8 +43,13 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public StudentModel getById(@PathVariable Integer id) {
+    public StudentModel getStudentById(@PathVariable Integer id) {
         return service.getStudentById(id);
+    }
+
+    @GetMapping("/birthdays/today")
+    public List<StudentModel> getTodayBirthdays() {
+        return service.getTodayBirthdays();
     }
 
     @DeleteMapping("/delete/{id}")

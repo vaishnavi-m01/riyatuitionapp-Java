@@ -114,15 +114,13 @@ public class StudentServiceImpl implements StudentService {
         try {
             String fileName = "Student_" + studentId + ".png";
 
-            String uploadUrl =
-                    SUPABASE_URL + "/storage/v1/object/Student_image/" + fileName;
+            String uploadUrl = SUPABASE_URL + "/storage/v1/object/Student_image/" + fileName;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setBearerAuth(SUPABASE_SERVICE_KEY);
 
-            HttpEntity<byte[]> request =
-                    new HttpEntity<>(file.getBytes(), headers);
+            HttpEntity<byte[]> request = new HttpEntity<>(file.getBytes(), headers);
 
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, String.class);
@@ -175,6 +173,10 @@ public class StudentServiceImpl implements StudentService {
 
     public StudentModel getStudentById(Integer id) {
         return mapToModel(studentRepo.findById(id).orElse(null));
+    }
+
+    public List<StudentModel> getTodayBirthdays() {
+        return studentRepo.findTodayBirthdays().stream().map(this::mapToModel).toList();
     }
 
     public String deleteStudent(Integer id) {

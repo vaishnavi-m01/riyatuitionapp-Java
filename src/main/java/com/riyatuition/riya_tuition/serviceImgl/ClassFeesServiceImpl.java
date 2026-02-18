@@ -31,7 +31,7 @@ public class ClassFeesServiceImpl implements ClassFeesService {
 
 		if (entity.getStandard() != null) {
 			model.setStandardId(entity.getStandard().getId());
-	        model.setStandardName(entity.getStandard().getName());
+			model.setStandardName(entity.getStandard().getName());
 
 		}
 		model.setAmount(entity.getAmount());
@@ -65,49 +65,45 @@ public class ClassFeesServiceImpl implements ClassFeesService {
 		return classFeesRepo.findAll().stream().map(this::mapToModel).toList();
 	}
 
-	
 	@Override
 	public ClassFeesModel getById(Integer id) {
-	    ClassFeesEntity entity = classFeesRepo.findById(id).orElse(null);
-	    return mapToModel(entity);
+		ClassFeesEntity entity = classFeesRepo.findById(id).orElse(null);
+		return mapToModel(entity);
 	}
 
 	@Override
 	public ClassFeesModel getByStandardId(Integer standardId) {
 
-	    ClassFeesEntity entity = classFeesRepo
-	            .findByStandardId(standardId)
-	            .orElse(null);
+		ClassFeesEntity entity = classFeesRepo
+				.findByStandardId(standardId)
+				.orElse(null);
 
-	    return mapToModel(entity);
+		return mapToModel(entity);
 	}
 
 	@Override
 	public ClassFeesModel getByIdAndStandardId(Integer id, Integer standardId) {
-	    ClassFeesEntity entity =
-	            classFeesRepo.findByIdAndStandardId(id, standardId)
-	            .orElse(null);
-	    return mapToModel(entity);
+		ClassFeesEntity entity = classFeesRepo.findByIdAndStandardId(id, standardId)
+				.orElse(null);
+		return mapToModel(entity);
 	}
-
-
 
 	@Override
 	public ClassFeesModel updateClassFees(Integer id, ClassFeesModel model) {
 		ClassFeesEntity entity = classFeesRepo.findById(id).orElse(null);
-		
+
 		if (entity == null) {
 			return null;
 		}
-		
+
 		entity.setId(model.getId());
 		entity.setAmount(model.getAmount());
 		StandardEntity standard = standardRepo.findById(model.getStandardId()).orElse(null);
 		entity.setStandard(standard);
 		entity.setModifiedDate(model.getModifiedDate());
-		
+
 		ClassFeesEntity update = classFeesRepo.save(entity);
-		
+
 		return mapToModel(update);
 	}
 

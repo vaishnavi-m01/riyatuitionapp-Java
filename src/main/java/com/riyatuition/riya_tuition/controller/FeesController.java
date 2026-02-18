@@ -1,60 +1,54 @@
 package com.riyatuition.riya_tuition.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.riyatuition.riya_tuition.enums.PaymentType;
 import com.riyatuition.riya_tuition.model.FeesModel;
 import com.riyatuition.riya_tuition.service.FeesService;
 
-import io.swagger.v3.oas.annotations.Parameter;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/fees")
-//@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class FeesController {
 
-	@Autowired
-	private FeesService feesService;
+    private final FeesService feesService;
 
-	@PostMapping("/create")
-	public FeesModel createFees(@RequestBody FeesModel model) {
-		return feesService.createFees(model);
-	}
+    @PostMapping("/create")
+    public ResponseEntity<FeesModel> createFees(@RequestBody FeesModel model) {
+        return ResponseEntity.ok(feesService.createFees(model));
+    }
 
-	@GetMapping("/getAll")
-	public List<FeesModel> getAllFees(
-			@Parameter(description = "date") @RequestParam(value = "date", required = false) String date) {
-		return feesService.getAll(date);
-	}
+    @GetMapping("/getAll")
+    public ResponseEntity<List<FeesModel>> getAllFees() {
+        return ResponseEntity.ok(feesService.getAllFees());
+    }
 
-	@GetMapping("/get/{id}")
-	public FeesModel getById(@Parameter(description = "Fees Id", required = true) @PathVariable("id") Integer id) {
-		return feesService.getById(id);
-	}
+    @GetMapping("/{id}")
+    public ResponseEntity<FeesModel> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(feesService.getFeesById(id));
+    }
 
-	@PutMapping("/update/{id}")
-	public FeesModel updateFees(@Parameter(description = "fees Id") @PathVariable("id") Integer id,
-			@RequestBody FeesModel model) {
-		return feesService.updateFees(id, model);
-	}
+    @PutMapping("/update/{id}")
+    public ResponseEntity<FeesModel> update(@PathVariable Integer id, @RequestBody FeesModel model) {
+        return ResponseEntity.ok(feesService.updateFees(id, model));
+    }
 
-	@PostMapping("/settle/{id}")
-	public FeesModel settleBalance(
-	        @PathVariable("id") Integer id,
-	        @RequestParam("amount") BigDecimal paid,
-	        @RequestParam("paymentType") PaymentType paymentType) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        return ResponseEntity.ok(feesService.deleteFees(id));
+    }
 
-	    return feesService.settleBalance(id, paid, paymentType);
-	}
+    @PostMapping("/settle")
+    public ResponseEntity<FeesModel> settleBalance(@RequestBody FeesModel model) {
+        return ResponseEntity.ok(feesService.settleBalance(model));
+    }
 
-
-
-	@DeleteMapping("/delete/{id}")
-	public String deleteFees(@Parameter(description = "fees id") @PathVariable("id") Integer id) {
-		return feesService.deleteFees(id);
-	}
+    @GetMapping("/recent/{studentId}")
+    public ResponseEntity<List<FeesModel>> getRecentTransactions(@PathVariable Integer studentId) {
+        return ResponseEntity.ok(feesService.getRecentTransactions(studentId));
+    }
 }

@@ -33,7 +33,7 @@ public class ClassFeesEntity {
 
 	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "standard_id")
+	@JoinColumn(name = "standard_id", unique = true)
 	private StandardEntity standard;
 
 	@NotNull

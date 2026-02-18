@@ -11,35 +11,33 @@ import com.riyatuition.riya_tuition.repository.StandardRepo;
 import com.riyatuition.riya_tuition.service.StandardService;
 
 @Service
-public class StandaradServiceIml implements StandardService{
+public class StandaradServiceIml implements StandardService {
 
-	
 	@Autowired
 	private StandardRepo standardRepo;
-	
+
 	private StandardModel maptoModel(StandardEntity entity) {
-		
-	    if (entity == null) return null;
-	    
-	    StandardModel model = new StandardModel();
-	    model.setId(entity.getId());
-	    model.setName(entity.getName());
-	    model.setCreatedDate(entity.getCreatedDate());
-	    model.setModifiedDate(entity.getModifiedDate());
+
+		if (entity == null)
+			return null;
+
+		StandardModel model = new StandardModel();
+		model.setId(entity.getId());
+		model.setName(entity.getName());
+		model.setCreatedDate(entity.getCreatedDate());
+		model.setModifiedDate(entity.getModifiedDate());
 		return model;
 	}
-	
-	
-	
+
 	@Override
 	public StandardModel createStandard(StandardModel model) {
-		
+
 		StandardEntity entity = new StandardEntity();
-		  
+
 		entity.setName(model.getName());
 		entity.setCreatedDate(model.getCreatedDate());
 		entity.setModifiedDate(model.getModifiedDate());
-		
+
 		StandardEntity savedstandard = standardRepo.save(entity);
 		return maptoModel(savedstandard);
 	}
@@ -51,26 +49,26 @@ public class StandaradServiceIml implements StandardService{
 
 	@Override
 	public StandardModel getStandardByid(Integer id) {
-	
-		StandardEntity entity  = standardRepo.findById(id).orElse(null);
+
+		StandardEntity entity = standardRepo.findById(id).orElse(null);
 		return maptoModel(entity);
 	}
 
 	@Override
 	public StandardModel updateStandard(Integer id, StandardModel model) {
-		
+
 		StandardEntity entity = standardRepo.findById(id).orElse(null);
-		
-		if(entity == null) return null;
-		
+
+		if (entity == null)
+			return null;
+
 		entity.setId(model.getId());
 		entity.setName(model.getName());
 		entity.setModifiedDate(model.getModifiedDate());
-		
+
 		StandardEntity update = standardRepo.save(entity);
 		return maptoModel(update);
-		
-		
+
 	}
 
 	@Override
@@ -78,7 +76,5 @@ public class StandaradServiceIml implements StandardService{
 		standardRepo.deleteById(id);
 		return "Standard deleted successfully!";
 	}
-	
-	
 
 }

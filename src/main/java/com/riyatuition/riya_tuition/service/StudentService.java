@@ -8,13 +8,15 @@ import com.riyatuition.riya_tuition.model.StudentModel;
 
 public interface StudentService {
 
-	  StudentModel createStudent(StudentModel model, MultipartFile image);
+	StudentModel createStudent(StudentModel model, MultipartFile image);
 
-	    StudentModel updateStudent(Integer id, StudentModel model, MultipartFile image);
+	StudentModel updateStudent(Integer id, StudentModel model, MultipartFile image);
 
-	    List<StudentModel> getAllStudents();
+	List<StudentModel> getAllStudents();
 
-	    StudentModel getStudentById(Integer id);
+	StudentModel getStudentById(Integer id);
 
-	    String deleteStudent(Integer id);
+	List<StudentModel> getTodayBirthdays();
+
+	String deleteStudent(Integer id);
 }
