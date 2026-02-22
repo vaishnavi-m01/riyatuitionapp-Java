@@ -41,7 +41,9 @@ public class FeesServiceImpl implements FeesService {
                                 .anyMatch(f -> f.getStudentId().equals(model.getStudentId()));
 
                 if (alreadyPaid) {
-                        throw new RuntimeException("Fees for this student already paid/recorded for this month.");
+                        String monthName = LocalDateTime.now().getMonth().name().toLowerCase();
+                        monthName = monthName.substring(0, 1).toUpperCase() + monthName.substring(1);
+                        throw new RuntimeException("Fees for this student already paid for " + monthName + ".");
                 }
 
                 // 2. Fetch student and class fees to calculate balance

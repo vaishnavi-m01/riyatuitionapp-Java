@@ -7,14 +7,16 @@ import com.riyatuition.riya_tuition.entity.AdminEntity;
 public interface AdminService {
 
     String register(String name, String email, String phone,
-                    String password, MultipartFile image);
+            String password, MultipartFile image);
 
     String update(Integer id, String name, String phone,
-                  MultipartFile image);
+            MultipartFile image);
 
     void delete(Integer id);
 
     List<AdminEntity> getAll();
 
     AdminEntity getById(Integer id);
+
+    String changePassword(Integer id, String oldPassword, String newPassword, String confirmPassword);
 }

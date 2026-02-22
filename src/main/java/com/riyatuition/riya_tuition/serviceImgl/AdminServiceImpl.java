@@ -36,13 +36,13 @@ public class AdminServiceImpl implements AdminService {
     // ✅ REGISTER
     @Override
     public String register(String name, String email, String phone,
-                           String password, MultipartFile image) {
+            String password, MultipartFile image) {
 
         if (repo.findByEmail(email).isPresent()) {
             return "Email already exists";
         }
 
-        String imageUrl = uploadToSupabase(image,0);
+        String imageUrl = uploadToSupabase(image, 0);
 
         AdminEntity admin = new AdminEntity();
         admin.setName(name);
@@ -58,7 +58,7 @@ public class AdminServiceImpl implements AdminService {
     // ✅ UPDATE
     @Override
     public String update(Integer id, String name, String phone,
-                         MultipartFile image) {
+            MultipartFile image) {
 
         AdminEntity admin = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
@@ -74,7 +74,6 @@ public class AdminServiceImpl implements AdminService {
         repo.save(admin);
         return "Admin updated successfully";
     }
-
 
     // ✅ DELETE
     @Override
@@ -95,8 +94,29 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
     }
 
+    @Override
+    public String changePassword(Integer id, String oldPassword, String newPassword, String confirmPassword) {
+        AdminEntity admin = repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Admin not found"));
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("New password and confirm password do not match");
+        }
+
+        if (!encoder.matches(oldPassword, admin.getPassword())) {
+            throw new RuntimeException("Invalid old password");
+        }
+
+        admin.setPassword(encoder.encode(newPassword));
+        admin.setConfirmPassword(encoder.encode(confirmPassword)); // Or keep as is, usually we store encoded or just
+                                                                   // password
+        repo.save(admin);
+
+        return "Password changed successfully";
+    }
+
     // 🔹 SUPABASE IMAGE UPLOAD (CORE METHOD)
-  
+
     private String uploadToSupabase(MultipartFile file, Integer adminId) {
 
         if (file == null || file.isEmpty()) {
@@ -106,28 +126,24 @@ public class AdminServiceImpl implements AdminService {
         try {
             String fileName = "admin_" + adminId + ".png";
 
-            String uploadUrl =
-                SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
+            String uploadUrl = SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
             headers.setBearerAuth(SUPABASE_SERVICE_KEY);
 
-            HttpEntity<byte[]> request =
-                new HttpEntity<>(file.getBytes(), headers);
+            HttpEntity<byte[]> request = new HttpEntity<>(file.getBytes(), headers);
 
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.exchange(uploadUrl, HttpMethod.PUT, request, String.class);
 
             return SUPABASE_URL
-                + "/storage/v1/object/public/admin-images/"
-                + fileName;
+                    + "/storage/v1/object/public/admin-images/"
+                    + fileName;
 
         } catch (Exception e) {
             throw new RuntimeException("Supabase image upload failed", e);
         }
     }
-
-
 
 }

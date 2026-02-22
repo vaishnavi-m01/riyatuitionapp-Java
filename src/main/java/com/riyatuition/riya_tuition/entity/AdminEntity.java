@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Entity
 @Table(name = "admin")
 @EntityListeners(AuditingEntityListener.class)
-@JsonPropertyOrder({"id","name","email","phone","image","createdDate","modifiedDate"})
+@JsonPropertyOrder({ "id", "name", "email", "phone", "image", "createdDate", "modifiedDate" })
 public class AdminEntity {
 
     @Id
@@ -31,6 +31,8 @@ public class AdminEntity {
     private String phone;
 
     private String password;
+
+    private String confirmPassword;
 
     private String image; // image path (optional)
 

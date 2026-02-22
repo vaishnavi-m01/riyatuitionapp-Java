@@ -22,24 +22,21 @@ public class AdminController {
     }
 
     // ✅ REGISTER
-   @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-public ResponseEntity<String> register(
-        @RequestPart("name") String name,
-        @RequestPart("email") String email,
-        @RequestPart("phone") String phone,
-        @RequestPart("password") String password,
-        @RequestPart(value = "image", required = false) MultipartFile image
-) {
-    try {
-        String result = service.register(name, email, phone, password, image);
-        return ResponseEntity.ok(result);
-    } catch (Exception e) {
-        e.printStackTrace(); // Will log error in Render logs
-        return ResponseEntity.status(500).body(e.getMessage());
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> register(
+            @RequestPart("name") String name,
+            @RequestPart("email") String email,
+            @RequestPart("phone") String phone,
+            @RequestPart("password") String password,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
+        try {
+            String result = service.register(name, email, phone, password, image);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            e.printStackTrace(); // Will log error in Render logs
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
     }
-}
-
-
 
     // ✅ UPDATE
     @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -47,11 +44,9 @@ public ResponseEntity<String> register(
             @PathVariable Integer id,
             @RequestPart(value = "name", required = false) String name,
             @RequestPart(value = "phone", required = false) String phone,
-            @RequestPart(value = "image", required = false) MultipartFile image
-    ) {
+            @RequestPart(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(
-                service.update(id, name, phone, image)
-        );
+                service.update(id, name, phone, image));
     }
 
     // ✅ DELETE
@@ -71,5 +66,53 @@ public ResponseEntity<String> register(
     @GetMapping("/getbyid/{id}")
     public ResponseEntity<AdminEntity> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(service.getById(id));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        String result = service.changePassword(request.getId(), request.getOldPassword(), request.getNewPassword(),
+                request.getConfirmPassword());
+        return ResponseEntity.ok(result);
+    }
+
+    // Inner class for request body
+    public static class ChangePasswordRequest {
+        private Integer id;
+        private String oldPassword;
+        private String newPassword;
+        private String confirmPassword;
+
+        // Getters and Setters
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getOldPassword() {
+            return oldPassword;
+        }
+
+        public void setOldPassword(String oldPassword) {
+            this.oldPassword = oldPassword;
+        }
+
+        public String getNewPassword() {
+            return newPassword;
+        }
+
+        public void setNewPassword(String newPassword) {
+            this.newPassword = newPassword;
+        }
+
+        public String getConfirmPassword() {
+            return confirmPassword;
+        }
+
+        public void setConfirmPassword(String confirmPassword) {
+            this.confirmPassword = confirmPassword;
+        }
     }
 }
