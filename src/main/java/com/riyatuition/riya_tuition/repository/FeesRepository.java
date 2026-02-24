@@ -77,14 +77,14 @@ public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
 	List<String> findPaidStudentNames(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
 	@Query("""
-			    SELECT SUM(f.amount) FROM FeesEntity f
+			    SELECT COALESCE(SUM(f.paid + f.pending), 0) FROM FeesEntity f
 			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
 			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
 			""")
 	BigDecimal sumTotalAmount(@Param("month") Integer month, @Param("year") Integer year);
 
 	@Query("""
-			    SELECT SUM(f.paid) FROM FeesEntity f
+			    SELECT COALESCE(SUM(f.paid), 0) FROM FeesEntity f
 			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
 			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
 			""")

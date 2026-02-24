@@ -151,14 +151,11 @@ public class FeesServiceImpl implements FeesService {
                 BigDecimal totalAmount = feesRepo.sumTotalAmount(month, year);
                 BigDecimal totalPaid = feesRepo.sumTotalPaid(month, year);
 
-                if (totalAmount == null)
-                        totalAmount = BigDecimal.ZERO;
-                if (totalPaid == null)
-                        totalPaid = BigDecimal.ZERO;
-
                 BigDecimal totalPending = totalAmount.subtract(totalPaid);
                 long paidCount = feesRepo.countPaidStudents(month, year);
-                long pendingCount = feesRepo.countPendingStudents(month, year);
+
+                long totalStudents = studentRepo.count();
+                long pendingCount = totalStudents - paidCount;
 
                 return new FeesSummaryModel(totalAmount, totalPaid, totalPending, paidCount, pendingCount);
         }
