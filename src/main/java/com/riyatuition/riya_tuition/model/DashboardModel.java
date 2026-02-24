@@ -1,6 +1,7 @@
 package com.riyatuition.riya_tuition.model;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,9 @@ public class DashboardModel {
 
     private long paidStudentsThisMonth;
     private long pendingStudentsThisMonth;
+
+    private List<String> paidStudentNames;
+    private List<String> pendingStudentNames;
 
     private long todayBirthdays;
 }

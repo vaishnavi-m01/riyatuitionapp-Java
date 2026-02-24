@@ -121,7 +121,7 @@ public class AdminServiceImpl implements AdminService {
         }
 
         try {
-            String fileName = "admin_" + adminId + ".png";
+            String fileName = "admin_" + adminId + "_" + System.currentTimeMillis() + ".png";
 
             String uploadUrl = SUPABASE_URL + "/storage/v1/object/admin-images/" + fileName;
 

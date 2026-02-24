@@ -3,6 +3,8 @@ package com.riyatuition.riya_tuition.serviceImgl;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -29,8 +31,17 @@ public class DashboardService {
         LocalDateTime endOfMonth = getEndOfMonth();
 
         long totalStudents = studentRepository.count();
-        long paidStudentsThisMonth = feesRepository.countUniquePaidStudents(startOfMonth, endOfMonth);
+        List<String> paidStudentNames = feesRepository.findPaidStudentNames(startOfMonth, endOfMonth);
+        long paidStudentsThisMonth = paidStudentNames.size();
         long pendingStudentsThisMonth = totalStudents - paidStudentsThisMonth;
+
+        List<String> allStudentNames = studentRepository.findAll().stream()
+                .map(s -> s.getName())
+                .collect(Collectors.toList());
+
+        List<String> pendingStudentNames = allStudentNames.stream()
+                .filter(name -> !paidStudentNames.contains(name))
+                .collect(Collectors.toList());
 
         return new DashboardModel(
                 studentRepository.count(),
@@ -44,6 +55,9 @@ public class DashboardService {
 
                 paidStudentsThisMonth,
                 pendingStudentsThisMonth,
+
+                paidStudentNames,
+                pendingStudentNames,
 
                 studentRepository.countTodayBirthdays());
     }
