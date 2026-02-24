@@ -77,31 +77,31 @@ public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
 	List<String> findPaidStudentNames(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
 	@Query("""
-			    SELECT COALESCE(SUM(f.paid + f.pending), 0) FROM FeesEntity f
-			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
-			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    SELECT COALESCE(SUM(COALESCE(f.paid, 0) + COALESCE(f.pending, 0)), 0) FROM FeesEntity f
+			    WHERE (:month IS NULL OR EXTRACT(MONTH FROM f.createdDate) = :month)
+			    AND (:year IS NULL OR EXTRACT(YEAR FROM f.createdDate) = :year)
 			""")
 	BigDecimal sumTotalAmount(@Param("month") Integer month, @Param("year") Integer year);
 
 	@Query("""
 			    SELECT COALESCE(SUM(f.paid), 0) FROM FeesEntity f
-			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
-			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    WHERE (:month IS NULL OR EXTRACT(MONTH FROM f.createdDate) = :month)
+			    AND (:year IS NULL OR EXTRACT(YEAR FROM f.createdDate) = :year)
 			""")
 	BigDecimal sumTotalPaid(@Param("month") Integer month, @Param("year") Integer year);
 
 	@Query("""
 			    SELECT COUNT(DISTINCT f.studentId) FROM FeesEntity f
-			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
-			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    WHERE (:month IS NULL OR EXTRACT(MONTH FROM f.createdDate) = :month)
+			    AND (:year IS NULL OR EXTRACT(YEAR FROM f.createdDate) = :year)
 			    AND f.status = 'Paid'
 			""")
 	long countPaidStudents(@Param("month") Integer month, @Param("year") Integer year);
 
 	@Query("""
 			    SELECT COUNT(DISTINCT f.studentId) FROM FeesEntity f
-			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
-			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    WHERE (:month IS NULL OR EXTRACT(MONTH FROM f.createdDate) = :month)
+			    AND (:year IS NULL OR EXTRACT(YEAR FROM f.createdDate) = :year)
 			    AND f.status = 'Pending'
 			""")
 	long countPendingStudents(@Param("month") Integer month, @Param("year") Integer year);
