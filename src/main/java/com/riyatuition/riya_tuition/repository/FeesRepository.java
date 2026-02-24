@@ -68,11 +68,42 @@ public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
 	long countUniquePaidStudents(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
 	@Query("""
-			    SELECT DISTINCT f.studentName
-			    FROM FeesEntity f
-			    WHERE f.createdDate BETWEEN :start AND :end
+			    SELECT DISTINCT s.name
+			    FROM FeesEntity f, StudentEntity s
+			    WHERE f.studentId = s.id
+			    AND f.createdDate BETWEEN :start AND :end
 			    AND f.status = 'Paid'
 			""")
 	List<String> findPaidStudentNames(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+	@Query("""
+			    SELECT SUM(f.amount) FROM FeesEntity f
+			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
+			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			""")
+	BigDecimal sumTotalAmount(@Param("month") Integer month, @Param("year") Integer year);
+
+	@Query("""
+			    SELECT SUM(f.paid) FROM FeesEntity f
+			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
+			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			""")
+	BigDecimal sumTotalPaid(@Param("month") Integer month, @Param("year") Integer year);
+
+	@Query("""
+			    SELECT COUNT(DISTINCT f.studentId) FROM FeesEntity f
+			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
+			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    AND f.status = 'Paid'
+			""")
+	long countPaidStudents(@Param("month") Integer month, @Param("year") Integer year);
+
+	@Query("""
+			    SELECT COUNT(DISTINCT f.studentId) FROM FeesEntity f
+			    WHERE (:month IS NULL OR FUNCTION('MONTH', f.createdDate) = :month)
+			    AND (:year IS NULL OR FUNCTION('YEAR', f.createdDate) = :year)
+			    AND f.status = 'Pending'
+			""")
+	long countPendingStudents(@Param("month") Integer month, @Param("year") Integer year);
 
 }

@@ -12,6 +12,7 @@ import com.riyatuition.riya_tuition.entity.ClassFeesEntity;
 import com.riyatuition.riya_tuition.entity.FeesEntity;
 import com.riyatuition.riya_tuition.entity.StudentEntity;
 import com.riyatuition.riya_tuition.model.FeesModel;
+import com.riyatuition.riya_tuition.model.FeesSummaryModel;
 import com.riyatuition.riya_tuition.repository.ClassFeesRepository;
 import com.riyatuition.riya_tuition.repository.FeesRepository;
 import com.riyatuition.riya_tuition.repository.StudentRepo;
@@ -143,6 +144,23 @@ public class FeesServiceImpl implements FeesService {
                                 .sorted((a, b) -> b.getCreatedDate().compareTo(a.getCreatedDate()))
                                 .map(this::mapToModel)
                                 .collect(Collectors.toList());
+        }
+
+        @Override
+        public FeesSummaryModel getSummary(Integer month, Integer year) {
+                BigDecimal totalAmount = feesRepo.sumTotalAmount(month, year);
+                BigDecimal totalPaid = feesRepo.sumTotalPaid(month, year);
+
+                if (totalAmount == null)
+                        totalAmount = BigDecimal.ZERO;
+                if (totalPaid == null)
+                        totalPaid = BigDecimal.ZERO;
+
+                BigDecimal totalPending = totalAmount.subtract(totalPaid);
+                long paidCount = feesRepo.countPaidStudents(month, year);
+                long pendingCount = feesRepo.countPendingStudents(month, year);
+
+                return new FeesSummaryModel(totalAmount, totalPaid, totalPending, paidCount, pendingCount);
         }
 
         private FeesModel mapToModel(FeesEntity entity) {

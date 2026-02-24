@@ -2,6 +2,7 @@ package com.riyatuition.riya_tuition.service;
 
 import java.util.List;
 import com.riyatuition.riya_tuition.model.FeesModel;
+import com.riyatuition.riya_tuition.model.FeesSummaryModel;
 
 public interface FeesService {
     FeesModel createFees(FeesModel model);
@@ -17,4 +18,6 @@ public interface FeesService {
     FeesModel settleBalance(FeesModel model);
 
     List<FeesModel> getRecentTransactions(Integer studentId);
+
+    FeesSummaryModel getSummary(Integer month, Integer year);
 }

@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.riyatuition.riya_tuition.model.FeesModel;
+import com.riyatuition.riya_tuition.model.FeesSummaryModel;
 import com.riyatuition.riya_tuition.service.FeesService;
 
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,12 @@ public class FeesController {
     @GetMapping("/recent/{studentId}")
     public ResponseEntity<List<FeesModel>> getRecentTransactions(@PathVariable Integer studentId) {
         return ResponseEntity.ok(feesService.getRecentTransactions(studentId));
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<FeesSummaryModel> getSummary(
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
+        return ResponseEntity.ok(feesService.getSummary(month, year));
     }
 }
