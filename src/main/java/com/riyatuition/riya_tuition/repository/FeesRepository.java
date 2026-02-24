@@ -59,4 +59,12 @@ public interface FeesRepository extends JpaRepository<FeesEntity, Integer> {
 			LocalDateTime start,
 			LocalDateTime end);
 
+	@Query("""
+			    SELECT COUNT(DISTINCT f.studentId)
+			    FROM FeesEntity f
+			    WHERE f.createdDate BETWEEN :start AND :end
+			    AND f.status = 'Paid'
+			""")
+	long countUniquePaidStudents(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
 }

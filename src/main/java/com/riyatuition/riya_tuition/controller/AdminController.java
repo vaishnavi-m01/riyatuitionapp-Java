@@ -43,10 +43,11 @@ public class AdminController {
     public ResponseEntity<String> update(
             @PathVariable Integer id,
             @RequestPart(value = "name", required = false) String name,
+            @RequestPart(value = "email", required = false) String email,
             @RequestPart(value = "phone", required = false) String phone,
             @RequestPart(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(
-                service.update(id, name, phone, image));
+                service.update(id, name, email, phone, image));
     }
 
     // ✅ DELETE

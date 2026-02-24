@@ -66,7 +66,8 @@ public class FeesServiceImpl implements FeesService {
                                 .pending(pendingAmount)
                                 .status(status)
                                 .paymentType(model.getPaymentType())
-                                .createdDate(LocalDateTime.now())
+                                .createdDate(model.getCreatedDate() != null ? model.getCreatedDate()
+                                                : LocalDateTime.now())
                                 .modifiedDate(LocalDateTime.now())
                                 .build();
 

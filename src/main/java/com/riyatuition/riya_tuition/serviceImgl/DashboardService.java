@@ -1,6 +1,8 @@
 package com.riyatuition.riya_tuition.serviceImgl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.springframework.stereotype.Service;
 
@@ -23,19 +25,34 @@ public class DashboardService {
     public DashboardModel getDashboardData() {
 
         LocalDate today = LocalDate.now();
+        LocalDateTime startOfMonth = getStartOfMonth();
+        LocalDateTime endOfMonth = getEndOfMonth();
+
+        long totalStudents = studentRepository.count();
+        long paidStudentsThisMonth = feesRepository.countUniquePaidStudents(startOfMonth, endOfMonth);
+        long pendingStudentsThisMonth = totalStudents - paidStudentsThisMonth;
 
         return new DashboardModel(
-            studentRepository.count(),
-            studentRepository.countNewStudentsThisMonth(),
+                studentRepository.count(),
+                studentRepository.countNewStudentsThisMonth(),
 
-            attendanceRepository.countByDateAndStatus(today, AttendanceStatus.Present),
-            attendanceRepository.countByDateAndStatus(today, AttendanceStatus.Absent),
+                attendanceRepository.countByDateAndStatus(today, AttendanceStatus.Present),
+                attendanceRepository.countByDateAndStatus(today, AttendanceStatus.Absent),
 
-            feesRepository.totalDueAmount(),
-            feesRepository.countDueStudents(),
+                feesRepository.totalDueAmount(),
+                feesRepository.countDueStudents(),
 
-            studentRepository.countTodayBirthdays()
-        );
+                paidStudentsThisMonth,
+                pendingStudentsThisMonth,
+
+                studentRepository.countTodayBirthdays());
+    }
+
+    private LocalDateTime getStartOfMonth() {
+        return LocalDate.now().withDayOfMonth(1).atStartOfDay();
+    }
+
+    private LocalDateTime getEndOfMonth() {
+        return LocalDate.now().plusMonths(1).withDayOfMonth(1).atStartOfDay().minusNanos(1);
     }
 }
-

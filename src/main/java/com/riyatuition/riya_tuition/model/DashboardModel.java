@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor 
+@AllArgsConstructor
 @NoArgsConstructor
 public class DashboardModel {
 
@@ -19,6 +19,9 @@ public class DashboardModel {
 
     private BigDecimal totalFeesDue;
     private long dueStudentsCount;
+
+    private long paidStudentsThisMonth;
+    private long pendingStudentsThisMonth;
 
     private long todayBirthdays;
 }

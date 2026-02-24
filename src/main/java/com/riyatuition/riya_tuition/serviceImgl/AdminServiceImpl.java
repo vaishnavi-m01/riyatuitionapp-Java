@@ -57,13 +57,14 @@ public class AdminServiceImpl implements AdminService {
 
     // ✅ UPDATE
     @Override
-    public String update(Integer id, String name, String phone,
+    public String update(Integer id, String name, String email, String phone,
             MultipartFile image) {
 
         AdminEntity admin = repo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Admin not found"));
 
         admin.setName(name);
+        admin.setEmail(email);
         admin.setPhone(phone);
 
         if (image != null && !image.isEmpty()) {
@@ -101,10 +102,6 @@ public class AdminServiceImpl implements AdminService {
 
         if (!newPassword.equals(confirmPassword)) {
             throw new RuntimeException("New password and confirm password do not match");
-        }
-
-        if (!encoder.matches(oldPassword, admin.getPassword())) {
-            throw new RuntimeException("Invalid old password");
         }
 
         admin.setPassword(encoder.encode(newPassword));
